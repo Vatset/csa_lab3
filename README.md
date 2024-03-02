@@ -1,6 +1,6 @@
 # CSA LAB3
 
-- P33111 Вацет Марии Алексеевны
+- P33111 Вацет Мария Алексеевна
 - `asm | acc | neum | hw | instr | struct | trap | mem | cstr | prob2 | spi`
 
 ## Язык программирования
