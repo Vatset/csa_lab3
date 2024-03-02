@@ -26,9 +26,7 @@ class ALU:
         self.Z = 1 if res == 0 else 0
 
     def __str__(self):
-        return f"ALU: \n" \
-               f"Left: {self.left}, Right: {self.right}\n" \
-               f"Flags - N: {self.N}, Z: {self.Z}, C: {self.C}"
+        return f"ALU: \n" f"Left: {self.left}, Right: {self.right}\n" f"Flags - N: {self.N}, Z: {self.Z}, C: {self.C}"
 
     # Инверсия бит в строке.
     def invert_string(self, s):
@@ -117,11 +115,13 @@ class DataPath:
         self.output_buffer = []
 
     def __str__(self):
-        return f"DataPath: \n" \
-               f"Registers: {self.registers}\n" \
-               f"Memory Size: {self.mem_size}\n" \
-               f"ALU State: {self.alu}\n" \
-               f"Output Buffer: {self.output_buffer}"
+        return (
+            f"DataPath: \n"
+            f"Registers: {self.registers}\n"
+            f"Memory Size: {self.mem_size}\n"
+            f"ALU State: {self.alu}\n"
+            f"Output Buffer: {self.output_buffer}"
+        )
 
     def get_reg(self, reg):
         return self.registers[reg]
@@ -152,36 +152,34 @@ class ControlUnit:
 
     def create_instruction(self, index, opcode, operand, value, address):
         instruction = {
-            'index': index,
-            'opcode': opcode,
+            "index": index,
+            "opcode": opcode,
         }
 
         if operand is not None:
-            instruction['operand'] = operand
+            instruction["operand"] = operand
 
-        instruction['value'] = value
+        instruction["value"] = value
 
         if address is not None:
-            instruction['address'] = address
+            instruction["address"] = address
 
         return instruction
 
     def create_var(self, index, value):
-        return {
-            'index': index,
-            'value': value,
-            'opcode': 'nop'
-        }
+        return {"index": index, "value": value, "opcode": "nop"}
 
     def __str__(self):
-        return f"ControlUnit: \n" \
-               f"Program: {self.program}\n" \
-               f"DataPath: {self.data_path}\n" \
-               f"Instruction Limit: {self.limit}\n" \
-               f"Instruction Counter: {self.instr_counter}\n" \
-               f"Command: {self.command}\n" \
-               f"Input Data: {self.input_data}\n" \
-               f"Input Pointer: {self.input_pointer}"
+        return (
+            f"ControlUnit: \n"
+            f"Program: {self.program}\n"
+            f"DataPath: {self.data_path}\n"
+            f"Instruction Limit: {self.limit}\n"
+            f"Instruction Counter: {self.instr_counter}\n"
+            f"Command: {self.command}\n"
+            f"Input Data: {self.input_data}\n"
+            f"Input Pointer: {self.input_pointer}"
+        )
 
     def get_reg(self, reg):
         return self.data_path.get_reg(reg)
@@ -195,7 +193,6 @@ class ControlUnit:
         if self.data_path.registers["AR"] == OUTPUT_MAP:
             self.data_path.output_buffer.append(self.data_path.registers["DR"])
 
-
     def read_output(self):
         self.data_path.registers["DR"] = self.data_path.memory[self.data_path.registers["AR"]]["value"]
 
@@ -203,12 +200,8 @@ class ControlUnit:
         res = self.data_path.alu.calc(left, right, op, change_flags)
         if change_flags:
             self.set_reg("PS", self.get_reg("PS") ^ ((self.get_reg("PS") ^ self.data_path.alu.C) & 1))
-            self.set_reg(
-                "PS", self.get_reg("PS") ^ ((self.get_reg("PS") ^ (self.data_path.alu.Z << 1)) & (1 << 1))
-            )
-            self.set_reg(
-                "PS", self.get_reg("PS") ^ ((self.get_reg("PS") ^ (self.data_path.alu.N << 2)) & (1 << 2))
-            )
+            self.set_reg("PS", self.get_reg("PS") ^ ((self.get_reg("PS") ^ (self.data_path.alu.Z << 1)) & (1 << 1)))
+            self.set_reg("PS", self.get_reg("PS") ^ ((self.get_reg("PS") ^ (self.data_path.alu.N << 2)) & (1 << 2)))
         return res
 
     def input_instruction(self):
@@ -282,7 +275,6 @@ class ControlUnit:
         if (self.get_reg("PS") >> 3) & 1 == 1 and (self.get_reg("PS") >> 4) & 1 == 1:
             self.process_interrupt()
         logger.info("interrupt end")
-
 
     def addrFetch(self):
         self.set_reg("AR", self.calc(0, self.get_reg("DR"), "add"))

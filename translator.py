@@ -104,7 +104,7 @@ def make_const_string(arr, index):
         lines = []
         for i, char in enumerate(str_arr):
             lines.append({"index": index + i, "value": char, "opcode": "nop"})
-        lines.append({"index": index + len(str_arr), "value": 0, "opcode": "nop"})  
+        lines.append({"index": index + len(str_arr), "value": 0, "opcode": "nop"})
         return lines
 
     if arr[1] in labels.keys():
@@ -151,6 +151,7 @@ def check_labels(arr, index):
         else:
             return index + 1
 
+
 def translate_stage_1(text):
     pc = 0
     sz = len(text)
@@ -159,15 +160,16 @@ def translate_stage_1(text):
         if not text[i]:
             continue
         text[i] = split_q(text[i], ";")[0]
-        line=text[i]
+        line = text[i]
         source_code.append(line)
-        code_str=split_q(line)
+        code_str = split_q(line)
         if is_address_string(code_str):
             pc = int(code_str[1])
             continue
         pc = check_labels(code_str, pc)
 
     return source_code
+
 
 def translate_stage_2(source_code):
     pc = 0
@@ -184,6 +186,7 @@ def translate_stage_2(source_code):
             pc = int(tr_str["index"])
         pc += 1
     return translated_code
+
 
 def source2json(arr, index):
     if is_label_string(arr):
@@ -203,6 +206,7 @@ def source2json(arr, index):
     else:
         return {}
 
+
 def translate(text):
     source_code = translate_stage_1(text)
     translated_code = translate_stage_2(source_code)
@@ -213,6 +217,7 @@ def translate(text):
             is_ended = True
     assert is_ended, "program must have hlt command"
     return translated_code
+
 
 def main(code_source, code_target):
     with open(code_source, encoding="utf-8") as f:
