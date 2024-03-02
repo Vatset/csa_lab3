@@ -25,7 +25,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          coverage run -m pytest --verbose
+          coverage run -m pytest . -v --update-goldens
           find . -type f -name "*.py" | xargs -t coverage report
 
       - name: Check code formatting
