@@ -25,7 +25,7 @@ enable_assertion_pass_hook = true
 addopts = "--doctest-modules"
 log_format = "%(levelname)-7s %(module)s:%(funcName)-13s %(message)s"
 
-[tool.ruff]
+[tool.ruff.lint]
 line-length = 120
 select = [
     # A set of chosen linter rules is specified here.
