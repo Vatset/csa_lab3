@@ -1,0 +1,29 @@
+org 1
+f1: .word 1
+f2: .word 2
+temp_f: .word 0
+n: .word 100
+sum: .word 2
+out: .word 2047
+
+
+start: cla
+    loop: load f2
+    store temp_f
+    add f1
+    store f2
+    cmp n
+    jmn check
+    jmz check
+    load sum
+    store (out)
+    hlt
+
+check: asr
+    jmc swap
+    asl
+    add sum
+    store sum
+    swap: load temp_f
+    store f1
+    jmp loop
