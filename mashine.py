@@ -208,16 +208,16 @@ class ControlUnit:
     def process_interrupt(self):
         logger.info("interrupt start")
         self.set_reg("PS", self.get_reg("PS") & ~(1 << 3))
-        self.set_reg("DR", self.calc(0, self.get_reg("PS"), "add"))
-        self.set_reg("AR", self.calc(0, self.get_reg("SP"), "add"))
+        self.set_reg("DR", self.get_reg("PS"))
+        self.set_reg("AR",self.get_reg("SP"))
         self.tick()  # 0 -> PS[3], PS -> DR, SP -> AR
 
         self.write_output()
         self.tick()  # DR -> mem[SP]
 
         self.set_reg("SP", self.calc(self.get_reg("SP"), 1, "sub"))
-        self.set_reg("DR", self.calc(0, self.get_reg("IP"), "add"))
-        self.set_reg("AR", self.calc(0, self.get_reg("SP"), "add"))
+        self.set_reg("DR", self.get_reg("IP"))
+        self.set_reg("AR", self.get_reg("SP"))
         self.tick()  # SP - 1 -> SP,  IP -> DR, SP -> AR
 
         self.write_output()
@@ -228,19 +228,19 @@ class ControlUnit:
         self.read_output()
         self.tick()  # SP - 1 -> SP, 0 -> AR, mem[AR] -> DR
 
-        self.set_reg("IP", self.calc(0, self.get_reg("DR"), "add"))
+        self.set_reg("IP", self.get_reg("DR"))
         self.tick()  # DR -> IP
 
         self.command_cycle()  # выполняем подпрограмму для прерывания
 
         self.set_reg("SP", self.calc(1, self.get_reg("SP"), "add"))
-        self.set_reg("AR", self.calc(0, self.get_reg("SP"), "add"))
+        self.set_reg("AR", self.get_reg("SP"))
         self.read_output()
-        self.set_reg("IP", self.calc(0, self.get_reg("DR"), "add"))
+        self.set_reg("IP", self.get_reg("DR"))
         self.tick()  # SP + 1 -> SP, SP -> AR, mem[AR] -> DR, DR -> IP
 
         self.set_reg("SP", self.calc(1, self.get_reg("SP"), "add"))
-        self.set_reg("AR", self.calc(0, self.get_reg("SP"), "add"))
+        self.set_reg("AR", self.get_reg("SP"))
         self.read_output()
 
         new_int = (self.get_reg("PS") >> 3) & 1
@@ -252,17 +252,17 @@ class ControlUnit:
         logger.info("interrupt end")
 
     def addrFetch(self):
-        self.set_reg("AR", self.calc(0, self.get_reg("DR"), "add"))
+        self.set_reg("AR", self.get_reg("DR"))
         self.read_output()
         self.tick()  # CR[operand] -> DR, DR -> AR, mem[AR] -> DR
 
     def opFetch(self):
-        self.set_reg("AR", self.calc(0, self.get_reg("DR"), "add"))
+        self.set_reg("AR", self.get_reg("DR"))
         self.read_output()
         self.tick()  # CR[operand] -> DR, DR -> AR, mem[AR] -> DR
 
-    def decode_and_execute_instruction(self):
-        self.set_reg("AR", self.calc(0, self.get_reg("IP"), "add"))  # IP -> AR
+    def decode_and_execute_instruction(self):  # реализовывает  с точностью до каждой инструкции
+        self.set_reg("AR", self.get_reg("IP"))  # IP -> AR
         self.set_reg("IP", self.calc(1, self.get_reg("IP"), "add"))  # IP + 1 -> IP
         self.set_reg("CR", self.data_path.memory[self.get_reg("AR")])
         instr = self.get_reg("CR")
@@ -291,7 +291,7 @@ class ControlUnit:
                 self.tick()  # DR -> AC
 
             elif opcode == "store":
-                self.set_reg("DR", self.calc(0, self.get_reg("AC"), "add"))
+                self.set_reg("DR", self.get_reg("AC"))
                 self.write_output()
                 self.tick()  # AC -> DR, DR -> mem[AR]
 
@@ -305,7 +305,7 @@ class ControlUnit:
                 elif flag is not None:
                     condition = eval("self.data_path.alu." + flag[0])
                 if condition:
-                    self.set_reg("IP", self.calc(0, self.get_reg("AR"), "add"))
+                    self.set_reg("IP", self.get_reg("AR"))
                     self.tick()  # AR -> IP
                 else:
                     self.tick()  # NOP
@@ -322,14 +322,14 @@ class ControlUnit:
                 self.tick()  # return
                 return False
             elif opcode == "push":
-                self.set_reg("DR", self.calc(self.get_reg("AC"), 0, "add"))  # AC -> DR
-                self.set_reg("AR", self.calc(self.get_reg("SP"), 0, "add"))  # SP -> AR
+                self.set_reg("DR", self.get_reg("AC"))  # AC -> DR
+                self.set_reg("AR", self.get_reg("SP"))  # SP -> AR
                 self.set_reg("SP", self.calc(self.get_reg("SP"), 1, "sub"))  # SP - 1 -> SP
                 self.write_output()
                 self.tick()  # AC -> DR, SP -> AR, SP - 1 -> SP, DR -> mem[SP]
             elif opcode == "pop":
                 self.set_reg("SP", self.calc(self.get_reg("SP"), 1, "add"))  # SP + 1 -> SP
-                self.set_reg("AR", self.calc(self.get_reg("SP"), 0, "add"))  # SP -> AR
+                self.set_reg("AR", self.get_reg("SP"))  # SP -> AR
                 self.read_output()
                 self.set_reg("AC", self.calc(self.get_reg("DR"), 0, "add", True))  # DR -> AC
                 self.tick()  # SP + 1 -> SP, SP -> AR, mem[SP] -> DR, DR -> AC
