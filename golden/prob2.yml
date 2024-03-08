@@ -375,6 +375,7 @@ out_log: |
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: load | AC 44      | IP: 16   | AR: 5    | PS: 00000 | DR: 44      | SP : 2045 | mem[AR] 44      | mem[SP] : 0   | CR: load 5       | 
+  INFO    mashine:write_output  OUTPUT 44
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: store | AC 44      | IP: 17   | AR: 2047 | PS: 00000 | DR: 44      | SP : 2045 | mem[AR] 44      | mem[SP] : 0   | CR: store 6      | 

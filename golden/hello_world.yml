@@ -60,6 +60,7 @@ out_log: |
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: load | AC 72      | IP: 32   | AR: 2    | PS: 00000 | DR: 72      | SP : 2045 | mem[AR] 72      | mem[SP] : 0   | CR: load 16      | 
+  INFO    mashine:write_output  OUTPUT H
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: store | AC 72      | IP: 33   | AR: 2047 | PS: 00000 | DR: 72      | SP : 2045 | mem[AR] 72      | mem[SP] : 0   | CR: store 18     | 
@@ -81,6 +82,7 @@ out_log: |
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: load | AC 101     | IP: 32   | AR: 3    | PS: 00000 | DR: 101     | SP : 2045 | mem[AR] 101     | mem[SP] : 0   | CR: load 16      | 
+  INFO    mashine:write_output  OUTPUT e
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: store | AC 101     | IP: 33   | AR: 2047 | PS: 00000 | DR: 101     | SP : 2045 | mem[AR] 101     | mem[SP] : 0   | CR: store 18     | 
@@ -102,6 +104,7 @@ out_log: |
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: load | AC 108     | IP: 32   | AR: 4    | PS: 00000 | DR: 108     | SP : 2045 | mem[AR] 108     | mem[SP] : 0   | CR: load 16      | 
+  INFO    mashine:write_output  OUTPUT l
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: store | AC 108     | IP: 33   | AR: 2047 | PS: 00000 | DR: 108     | SP : 2045 | mem[AR] 108     | mem[SP] : 0   | CR: store 18     | 
@@ -123,6 +126,7 @@ out_log: |
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: load | AC 108     | IP: 32   | AR: 5    | PS: 00000 | DR: 108     | SP : 2045 | mem[AR] 108     | mem[SP] : 0   | CR: load 16      | 
+  INFO    mashine:write_output  OUTPUT l
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: store | AC 108     | IP: 33   | AR: 2047 | PS: 00000 | DR: 108     | SP : 2045 | mem[AR] 108     | mem[SP] : 0   | CR: store 18     | 
@@ -144,6 +148,7 @@ out_log: |
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: load | AC 111     | IP: 32   | AR: 6    | PS: 00000 | DR: 111     | SP : 2045 | mem[AR] 111     | mem[SP] : 0   | CR: load 16      | 
+  INFO    mashine:write_output  OUTPUT o
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: store | AC 111     | IP: 33   | AR: 2047 | PS: 00000 | DR: 111     | SP : 2045 | mem[AR] 111     | mem[SP] : 0   | CR: store 18     | 
@@ -165,6 +170,7 @@ out_log: |
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: load | AC 44      | IP: 32   | AR: 7    | PS: 00000 | DR: 44      | SP : 2045 | mem[AR] 44      | mem[SP] : 0   | CR: load 16      | 
+  INFO    mashine:write_output  OUTPUT ,
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: store | AC 44      | IP: 33   | AR: 2047 | PS: 00000 | DR: 44      | SP : 2045 | mem[AR] 44      | mem[SP] : 0   | CR: store 18     | 
@@ -186,6 +192,7 @@ out_log: |
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: load | AC 32      | IP: 32   | AR: 8    | PS: 00000 | DR: 32      | SP : 2045 | mem[AR] 32      | mem[SP] : 0   | CR: load 16      | 
+  INFO    mashine:write_output  OUTPUT  
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: store | AC 32      | IP: 33   | AR: 2047 | PS: 00000 | DR: 32      | SP : 2045 | mem[AR] 32      | mem[SP] : 0   | CR: store 18     | 
@@ -207,6 +214,7 @@ out_log: |
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: load | AC 87      | IP: 32   | AR: 9    | PS: 00000 | DR: 87      | SP : 2045 | mem[AR] 87      | mem[SP] : 0   | CR: load 16      | 
+  INFO    mashine:write_output  OUTPUT W
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: store | AC 87      | IP: 33   | AR: 2047 | PS: 00000 | DR: 87      | SP : 2045 | mem[AR] 87      | mem[SP] : 0   | CR: store 18     | 
@@ -228,6 +236,7 @@ out_log: |
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: load | AC 111     | IP: 32   | AR: 10   | PS: 00000 | DR: 111     | SP : 2045 | mem[AR] 111     | mem[SP] : 0   | CR: load 16      | 
+  INFO    mashine:write_output  OUTPUT o
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: store | AC 111     | IP: 33   | AR: 2047 | PS: 00000 | DR: 111     | SP : 2045 | mem[AR] 111     | mem[SP] : 0   | CR: store 18     | 
@@ -249,6 +258,7 @@ out_log: |
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: load | AC 114     | IP: 32   | AR: 11   | PS: 00000 | DR: 114     | SP : 2045 | mem[AR] 114     | mem[SP] : 0   | CR: load 16      | 
+  INFO    mashine:write_output  OUTPUT r
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: store | AC 114     | IP: 33   | AR: 2047 | PS: 00000 | DR: 114     | SP : 2045 | mem[AR] 114     | mem[SP] : 0   | CR: store 18     | 
@@ -270,6 +280,7 @@ out_log: |
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: load | AC 108     | IP: 32   | AR: 12   | PS: 00000 | DR: 108     | SP : 2045 | mem[AR] 108     | mem[SP] : 0   | CR: load 16      | 
+  INFO    mashine:write_output  OUTPUT l
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: store | AC 108     | IP: 33   | AR: 2047 | PS: 00000 | DR: 108     | SP : 2045 | mem[AR] 108     | mem[SP] : 0   | CR: store 18     | 
@@ -291,6 +302,7 @@ out_log: |
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: load | AC 100     | IP: 32   | AR: 13   | PS: 00000 | DR: 100     | SP : 2045 | mem[AR] 100     | mem[SP] : 0   | CR: load 16      | 
+  INFO    mashine:write_output  OUTPUT d
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: store | AC 100     | IP: 33   | AR: 2047 | PS: 00000 | DR: 100     | SP : 2045 | mem[AR] 100     | mem[SP] : 0   | CR: store 18     | 
@@ -312,6 +324,7 @@ out_log: |
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: load | AC 33      | IP: 32   | AR: 14   | PS: 00000 | DR: 33      | SP : 2045 | mem[AR] 33      | mem[SP] : 0   | CR: load 16      | 
+  INFO    mashine:write_output  OUTPUT !
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: store | AC 33      | IP: 33   | AR: 2047 | PS: 00000 | DR: 33      | SP : 2045 | mem[AR] 33      | mem[SP] : 0   | CR: store 18     | 
@@ -333,6 +346,7 @@ out_log: |
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: load | AC 0       | IP: 32   | AR: 15   | PS: 00010 | DR: 0       | SP : 2045 | mem[AR] 0       | mem[SP] : 0   | CR: load 16      | 
+  INFO    mashine:write_output  OUTPUT 0
   INFO    mashine:decode_and_execute_instruction 
 
   INFO    mashine:__print__     Command: store | AC 0       | IP: 33   | AR: 2047 | PS: 00010 | DR: 0       | SP : 2045 | mem[AR] 0       | mem[SP] : 0   | CR: store 18     | 
