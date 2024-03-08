@@ -209,7 +209,7 @@ class ControlUnit:
         logger.info("interrupt start")
         self.set_reg("PS", self.get_reg("PS") & ~(1 << 3))
         self.set_reg("DR", self.get_reg("PS"))
-        self.set_reg("AR",self.get_reg("SP"))
+        self.set_reg("AR", self.get_reg("SP"))
         self.tick()  # 0 -> PS[3], PS -> DR, SP -> AR
 
         self.write_output()

@@ -230,7 +230,7 @@
 
 Реализован в классе `DataPath`.
 
-![Data Path](img/data_path.jpg)
+![Data Path](img/data_path.png)
 
 `data_memory` -- однопортовая память, поэтому либо читаем, либо пишем.
 `registers`
