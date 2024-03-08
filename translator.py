@@ -28,10 +28,7 @@ def splitter(string, splitter=" "):
 
 
 def is_label_string(arr):  # label: .word ...
-    return (
-            len(arr) >= 2
-            and is_label(arr[0])
-    )
+    return len(arr) >= 2 and is_label(arr[0])
 
 
 def is_labeless_string(arr):  # store (out)
@@ -44,9 +41,9 @@ def is_direct_addr(addr):  # store out
 
 def is_indirect_addr(addr):  # store (out)
     return (
-            addr[0] == "("
-            and addr[-1] == ")"
-            and (is_address(addr[1: len(addr) - 1]) or addr[1: len(addr) - 1] in labels.keys())
+        addr[0] == "("
+        and addr[-1] == ")"
+        and (is_address(addr[1 : len(addr) - 1]) or addr[1 : len(addr) - 1] in labels.keys())
     )
 
 
@@ -68,9 +65,9 @@ def is_cstr(arr):
 
 def is_const_string(arr):
     return (
-            len(arr) >= 2
-            and (arr[0] == const_label)
-            and ((is_number(arr[1]) or arr[1] in labels.keys()) or is_cstr(arr[1:]))
+        len(arr) >= 2
+        and (arr[0] == const_label)
+        and ((is_number(arr[1]) or arr[1] in labels.keys()) or is_cstr(arr[1:]))
     )
 
 
@@ -81,7 +78,7 @@ def is_address_string(arr):
 def make_op_string(arr, index):
     is_indirect = False
     if is_indirect_addr(arr[1]):
-        arr[1] = arr[1][1: len(arr[1]) - 1]
+        arr[1] = arr[1][1 : len(arr[1]) - 1]
         is_indirect = True
     if arr[1] in labels.keys():
         return [{"index": index, "opcode": arr[0], "operand": int(labels[arr[1]]), "value": 0, "address": is_indirect}]
@@ -148,7 +145,7 @@ def check_labels(arr, index):
 
 
 def translate_stage_1(text):
-    #обработка текста
+    # обработка текста
     pc = 0
     sz = len(text)
     source_code = []
@@ -168,7 +165,7 @@ def translate_stage_1(text):
 
 
 def translate_stage_2(source_code):
-    #преобразование в исходный
+    # преобразование в исходный
     pc = 0
     translated_code = []
     for line in source_code:

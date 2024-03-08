@@ -28,10 +28,9 @@ def is_address(text):
 def is_number(text):
     return all(c.isdigit() for c in text) and MAX_NUM > int(text) >= -MAX_ADDR
 
+
 def is_label(text):
-    return (
-        (text[-1] == ":")
-    )
+    return text[-1] == ":"
 
 
 def read_code(source):
