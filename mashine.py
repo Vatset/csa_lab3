@@ -25,9 +25,6 @@ class ALU:
         self.N = 1 if res < 0 else 0
         self.Z = 1 if res == 0 else 0
 
-    def __str__(self):
-        return f"ALU: \n" f"Left: {self.left}, Right: {self.right}\n" f"Flags - N: {self.N}, Z: {self.Z}, C: {self.C}"
-
     # Инверсия бит в строке.
     def invert_string(self, s):
         return "".join(["1" if c == "0" else "0" for c in s])
@@ -114,15 +111,6 @@ class DataPath:
         self.registers["PS"] = 2
         self.output_buffer = []
 
-    def __str__(self):
-        return (
-            f"DataPath: \n"
-            f"Registers: {self.registers}\n"
-            f"Memory Size: {self.mem_size}\n"
-            f"ALU State: {self.alu}\n"
-            f"Output Buffer: {self.output_buffer}"
-        )
-
     def get_reg(self, reg):
         return self.registers[reg]
 
@@ -135,7 +123,7 @@ class ControlUnit:
         self.program = program
         self.data_path = data_path
         self.limit = limit
-        self.instr_counter = 0  # счетчик чтобы машина не работала бесконечно
+        self.instr_counter = 0
 
         self.set_reg("IP", start_address)
         self._tick = 0
@@ -166,21 +154,6 @@ class ControlUnit:
 
         return instruction
 
-    def create_var(self, index, value):
-        return {"index": index, "value": value, "opcode": "nop"}
-
-    def __str__(self):
-        return (
-            f"ControlUnit: \n"
-            f"Program: {self.program}\n"
-            f"DataPath: {self.data_path}\n"
-            f"Instruction Limit: {self.limit}\n"
-            f"Instruction Counter: {self.instr_counter}\n"
-            f"Command: {self.command}\n"
-            f"Input Data: {self.input_data}\n"
-            f"Input Pointer: {self.input_pointer}"
-        )
-
     def get_reg(self, reg):
         return self.data_path.get_reg(reg)
 
@@ -192,6 +165,7 @@ class ControlUnit:
         self.data_path.memory[self.data_path.registers["AR"]] = {"value": self.data_path.registers["DR"]}
         if self.data_path.registers["AR"] == OUTPUT_MAP:
             self.data_path.output_buffer.append(self.data_path.registers["DR"])
+            logger.info("OUTPUT " + str(self.data_path.output_buffer[-1]))
 
     def read_output(self):
         self.data_path.registers["DR"] = self.data_path.memory[self.data_path.registers["AR"]]["value"]
@@ -207,6 +181,7 @@ class ControlUnit:
     def input_instruction(self):
         data = self.input_data[self.input_pointer][1]
         self.set_reg("PS", self.get_reg("PS") | 8)  # 1 -> PS[3]
+        logger.info("INPUT " + str(data))
         self.data_path.memory[INPUT_MAP] = {"value": data}  # data -> mem[IO], загрузили символ
         self.input_pointer += 1
 
@@ -228,7 +203,7 @@ class ControlUnit:
             self.instr_counter += 1
         if self.instr_counter >= self.limit:
             pass
-            print("Limit exceeded!")
+            print("Over limit")
 
     def process_interrupt(self):
         logger.info("interrupt start")
@@ -376,9 +351,8 @@ class ControlUnit:
                 self.tick()
         logger.info("\n")
         self.__print__("")
-        return True  # executed successfully
+        return True
 
-    # Вспомогательный метод для отображения символов.
     def __print_symb__(self, text):
         return str((lambda x: ord(x) if isinstance(x, str) else x)(text))
 

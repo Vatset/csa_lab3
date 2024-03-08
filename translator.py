@@ -7,7 +7,7 @@ labels = {}
 start_address = -1
 
 
-def split_q(string, splitter=" "):
+def splitter(string, splitter=" "):
     result = []
     in_quotes = False
     current_word = ""
@@ -23,44 +23,39 @@ def split_q(string, splitter=" "):
             current_word += char
     if current_word:
         result.append(current_word)
+        assert result, f"Splitting failed for string: {string}"
     return result
 
 
-def is_label_string(arr):
+def is_label_string(arr):  # label: .word ...
     return (
-        len(arr) >= 2
-        and is_code_label(arr[0])
-        and (is_op_string(arr[1:]) or is_nop_string(arr[1:]))
-        or is_const_string(arr[1:])
+            len(arr) >= 2
+            and is_label(arr[0])
     )
 
 
-def is_labeless_string(arr):
-    return len(arr) <= 2 and (is_op_string(arr) or is_nop_string(arr))
+def is_labeless_string(arr):  # store (out)
+    return is_op_string(arr) or is_nop_string(arr)
 
 
-def is_direct_addr(addr):
+def is_direct_addr(addr):  # store out
     return is_address(addr) or (addr in labels.keys())
 
 
-def is_indirect_addr(addr):
+def is_indirect_addr(addr):  # store (out)
     return (
-        addr[0] == "("
-        and addr[-1] == ")"
-        and (is_address(addr[1 : len(addr) - 1]) or addr[1 : len(addr) - 1] in labels.keys())
+            addr[0] == "("
+            and addr[-1] == ")"
+            and (is_address(addr[1: len(addr) - 1]) or addr[1: len(addr) - 1] in labels.keys())
     )
 
 
 def is_op_string(arr):
-    return len(arr) == 2 and is_op_command(arr[0]) and (is_direct_addr(arr[1]) or is_indirect_addr(arr[1]))
+    return len(arr) == 2 and (arr[0] in op_commands) and (is_direct_addr(arr[1]) or is_indirect_addr(arr[1]))
 
 
-def is_nop_string(arr):
-    return len(arr) == 1 and is_nop_command(arr[0])
-
-
-def not_empty(arr):
-    return [s for s in arr if s != ""]
+def is_nop_string(arr):  # inc
+    return len(arr) == 1 and (arr[0] in nop_commands)
 
 
 def is_cstr(arr):
@@ -73,20 +68,20 @@ def is_cstr(arr):
 
 def is_const_string(arr):
     return (
-        len(arr) >= 2
-        and is_const_label(arr[0])
-        and ((is_number(arr[1]) or arr[1] in labels.keys()) or is_cstr(arr[1:]))
+            len(arr) >= 2
+            and (arr[0] == const_label)
+            and ((is_number(arr[1]) or arr[1] in labels.keys()) or is_cstr(arr[1:]))
     )
 
 
 def is_address_string(arr):
-    return len(arr) == 2 and is_address_label(arr[0]) and is_address(arr[1])
+    return len(arr) == 2 and (arr[0] == adr_label) and is_address(arr[1])
 
 
 def make_op_string(arr, index):
     is_indirect = False
     if is_indirect_addr(arr[1]):
-        arr[1] = arr[1][1 : len(arr[1]) - 1]
+        arr[1] = arr[1][1: len(arr[1]) - 1]
         is_indirect = True
     if arr[1] in labels.keys():
         return [{"index": index, "opcode": arr[0], "operand": int(labels[arr[1]]), "value": 0, "address": is_indirect}]
@@ -135,9 +130,9 @@ def source2json(arr, index):
 def check_labels(arr, index):
     global start_address
     lbl = arr[0]
-    if is_code_label(lbl):
+    if is_label(lbl):
+        assert is_label(arr[0]), f"Invalid label: {arr[0]}"
         lbl = lbl[: len(lbl) - 1]
-        assert lbl not in labels.keys(), "Labels must be uniq " + str(lbl) + " " + str(labels.keys())
         if lbl == start_label:
             start_address = index
         labels[lbl] = index
@@ -153,16 +148,17 @@ def check_labels(arr, index):
 
 
 def translate_stage_1(text):
+    #обработка текста
     pc = 0
     sz = len(text)
     source_code = []
     for i in range(sz):
         if not text[i]:
             continue
-        text[i] = split_q(text[i], ";")[0]
+        text[i] = splitter(text[i], ";")[0]
         line = text[i]
         source_code.append(line)
-        code_str = split_q(line)
+        code_str = splitter(line)
         if is_address_string(code_str):
             pc = int(code_str[1])
             continue
@@ -172,45 +168,28 @@ def translate_stage_1(text):
 
 
 def translate_stage_2(source_code):
+    #преобразование в исходный
     pc = 0
     translated_code = []
     for line in source_code:
-        code_str = split_q(line)
+        code_str = splitter(line)
         if is_address_string(code_str):
             pc = int(code_str[1])
             continue
         translated = source2json(code_str, pc)
-        assert not translated == {}, ("Incorrect source code line " + str(pc) + ': "' + str(line)) + '"'
+        assert not translated == {}, ("Error " + str(pc) + ': "' + str(line)) + '"'
         for tr_str in translated:
+            assert tr_str["index"] >= 0, f"Invalid index: {tr_str['index']} in line: {line}"
             translated_code.append(tr_str)
             pc = int(tr_str["index"])
         pc += 1
     return translated_code
 
 
-def source2json(arr, index):
-    if is_label_string(arr):
-        if is_op_string(arr[1:]):
-            return make_op_string(arr[1:], index)
-        elif is_const_string(arr[1:]):
-            return make_const_string(arr[1:], index)
-        else:
-            return make_nop_string(arr[1:], index)
-    elif is_labeless_string(arr):
-        if is_op_string(arr):
-            return make_op_string(arr, index)
-        elif is_nop_string(arr):
-            return make_nop_string(arr, index)
-    elif is_const_string(arr):
-        return make_const_string(arr, index)
-    else:
-        return {}
-
-
 def translate(text):
     source_code = translate_stage_1(text)
     translated_code = translate_stage_2(source_code)
-    assert start_label in labels.keys()
+    assert start_address >= 0, f"Invalid start address: {start_address}"
     is_ended = False
     for instr in translated_code:
         if "opcode" in instr.keys() and instr["opcode"] == "hlt":
