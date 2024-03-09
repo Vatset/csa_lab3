@@ -117,6 +117,15 @@ class DataPath:
     def set_reg(self, reg, val):
         self.registers[reg] = val
 
+    def write_output(self):
+        self.memory[self.registers["AR"]] = {"value": self.registers["DR"]}
+        if self.registers["AR"] == OUTPUT_MAP:
+            self.output_buffer.append(self.registers["DR"])
+            logger.info("OUTPUT " + str(self.output_buffer[-1]))
+
+    def read_output(self):
+        self.registers["DR"] = self.memory[self.registers["AR"]]["value"]
+
 
 class ControlUnit:
     def __init__(self, program, data_path, start_address, input_data, limit):
@@ -138,22 +147,6 @@ class ControlUnit:
         for i in self.program:
             self.data_path.memory[int(i["index"])] = i
 
-    def create_instruction(self, index, opcode, operand, value, address):
-        instruction = {
-            "index": index,
-            "opcode": opcode,
-        }
-
-        if operand is not None:
-            instruction["operand"] = operand
-
-        instruction["value"] = value
-
-        if address is not None:
-            instruction["address"] = address
-
-        return instruction
-
     def get_reg(self, reg):
         return self.data_path.get_reg(reg)
 
@@ -161,14 +154,11 @@ class ControlUnit:
     def set_reg(self, reg, val):
         self.data_path.set_reg(reg, val)
 
-    def write_output(self):
-        self.data_path.memory[self.data_path.registers["AR"]] = {"value": self.data_path.registers["DR"]}
-        if self.data_path.registers["AR"] == OUTPUT_MAP:
-            self.data_path.output_buffer.append(self.data_path.registers["DR"])
-            logger.info("OUTPUT " + str(self.data_path.output_buffer[-1]))
+    def sig_write(self):
+        self.data_path.write_output()
 
-    def read_output(self):
-        self.data_path.registers["DR"] = self.data_path.memory[self.data_path.registers["AR"]]["value"]
+    def sig_read(self):
+        self.data_path.read_output()
 
     def calc(self, left, right, op, change_flags=False):
         res = self.data_path.alu.calc(left, right, op, change_flags)
@@ -212,7 +202,7 @@ class ControlUnit:
         self.set_reg("AR", self.get_reg("SP"))
         self.tick()  # 0 -> PS[3], PS -> DR, SP -> AR
 
-        self.write_output()
+        self.sig_write()
         self.tick()  # DR -> mem[SP]
 
         self.set_reg("SP", self.calc(self.get_reg("SP"), 1, "sub"))
@@ -220,12 +210,12 @@ class ControlUnit:
         self.set_reg("AR", self.get_reg("SP"))
         self.tick()  # SP - 1 -> SP,  IP -> DR, SP -> AR
 
-        self.write_output()
+        self.sig_write()
         self.tick()  # DR -> mem[SP]
 
         self.set_reg("SP", self.calc(self.get_reg("SP"), 1, "sub"))
         self.set_reg("AR", INT_VEC)  # адрес вектора прерываний
-        self.read_output()
+        self.sig_read()
         self.tick()  # SP - 1 -> SP, 0 -> AR, mem[AR] -> DR
 
         self.set_reg("IP", self.get_reg("DR"))
@@ -235,13 +225,13 @@ class ControlUnit:
 
         self.set_reg("SP", self.calc(1, self.get_reg("SP"), "add"))
         self.set_reg("AR", self.get_reg("SP"))
-        self.read_output()
+        self.sig_read()
         self.set_reg("IP", self.get_reg("DR"))
         self.tick()  # SP + 1 -> SP, SP -> AR, mem[AR] -> DR, DR -> IP
 
         self.set_reg("SP", self.calc(1, self.get_reg("SP"), "add"))
         self.set_reg("AR", self.get_reg("SP"))
-        self.read_output()
+        self.sig_read()
 
         new_int = (self.get_reg("PS") >> 3) & 1
         self.set_reg("PS", self.calc(0, self.get_reg("DR"), "add") | new_int * 8)
@@ -253,12 +243,12 @@ class ControlUnit:
 
     def addrFetch(self):
         self.set_reg("AR", self.get_reg("DR"))
-        self.read_output()
+        self.sig_read()
         self.tick()  # CR[operand] -> DR, DR -> AR, mem[AR] -> DR
 
     def opFetch(self):
         self.set_reg("AR", self.get_reg("DR"))
-        self.read_output()
+        self.sig_read()
         self.tick()  # CR[operand] -> DR, DR -> AR, mem[AR] -> DR
 
     def decode_and_execute_instruction(self):  # реализовывает  с точностью до каждой инструкции
@@ -292,7 +282,7 @@ class ControlUnit:
 
             elif opcode == "store":
                 self.set_reg("DR", self.get_reg("AC"))
-                self.write_output()
+                self.sig_write()
                 self.tick()  # AC -> DR, DR -> mem[AR]
 
             elif opcode in branch_commands:
@@ -325,12 +315,12 @@ class ControlUnit:
                 self.set_reg("DR", self.get_reg("AC"))  # AC -> DR
                 self.set_reg("AR", self.get_reg("SP"))  # SP -> AR
                 self.set_reg("SP", self.calc(self.get_reg("SP"), 1, "sub"))  # SP - 1 -> SP
-                self.write_output()
+                self.sig_write()
                 self.tick()  # AC -> DR, SP -> AR, SP - 1 -> SP, DR -> mem[SP]
             elif opcode == "pop":
                 self.set_reg("SP", self.calc(self.get_reg("SP"), 1, "add"))  # SP + 1 -> SP
                 self.set_reg("AR", self.get_reg("SP"))  # SP -> AR
-                self.read_output()
+                self.sig_write()
                 self.set_reg("AC", self.calc(self.get_reg("DR"), 0, "add", True))  # DR -> AC
                 self.tick()  # SP + 1 -> SP, SP -> AR, mem[SP] -> DR, DR -> AC
 
